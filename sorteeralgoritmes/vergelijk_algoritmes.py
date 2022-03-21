@@ -1,4 +1,3 @@
-# Voeg matplotlib aan de sorteer_venv toe.
 import matplotlib.pyplot as plt
 import random
 import algoritmes as a
@@ -12,6 +11,11 @@ def elementen_in_lijst(begin, eind):
     [1,2,3,4]
     
     """
+    lijst = []
+    for i in range(begin,eind+1):
+        lijst.append(i)
+    return lijst
+
 
 def genereer_unieke_lijst(n):
     """
@@ -23,6 +27,8 @@ def genereer_unieke_lijst(n):
     [1,4,3,2,5,0]
     
     """
+    lijst = random.sample(range(0, n), n)
+    return lijst
 
 def iteraties_algoritme(unieke_lijst, algoritme):
     """
@@ -34,6 +40,16 @@ def iteraties_algoritme(unieke_lijst, algoritme):
     22
 
     """
+    volgorde = "oplopend"
+    iteraties = 0
+    actief_algoritme_generator = algoritme(unieke_lijst, volgorde)
+    while True:
+        try:
+            next(actief_algoritme_generator)
+            iteraties+=1
+        except StopIteration:
+            break
+    return iteraties
     
 def overloop_iteraties(lijst, algoritme):
     """
@@ -46,17 +62,22 @@ def overloop_iteraties(lijst, algoritme):
     [5,8,15,27]
     
     """
+    lijst_iteraties = []
+    for i in lijst:
+        iteraties = iteraties_algoritme(genereer_unieke_lijst(i), algoritme)
+        lijst_iteraties.append(iteraties)
+    return lijst_iteraties
 
 def main():
     
     # Begin en eind waarde aantal te sorteren elementen
     begin = 2
-    eind = 100
+    eind = 10
     
     lijst_aantal_blokken = elementen_in_lijst(begin, eind)
 
     # Bozo enkel gebruiken zolang aantal te sorteren elementen <9 is.
-    bozo_aan = False
+    bozo_aan = True
 
     # Overloop de verschillende algoritmes
     iteraties_bubbel = overloop_iteraties(lijst_aantal_blokken, a.bubbel_sort)

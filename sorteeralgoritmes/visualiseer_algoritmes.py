@@ -6,165 +6,150 @@ from constants import Kleur, Fonts
 
 pygame.init()
 
-# Deze klasse is een container voor alle informatie op de display
 class Displayinformatie:
-    # Deze klasse heeft twee constante variabele: 
-    # een padding aan de zijkanten gelijk aan 50*2px
-    # een padding aan de bovenkant gelijk aan 150px
+    # Variabele die niet in een functie van de klasse staan zijn toegankelijk voor alle
+    # gegenereerde objecten van deze klasse.
+    PADDING_BREEDTE = 100 # Hoeveel padding aan de zijkant (50px links, 50px rechts)
+    PADDING_HOOGTE = 150 # Hoeveel padding aan de bovenkant
 
-    def __init__(): # vul input in OBV onderstaande vereisten
-        # In deze methode moet een object van Displayinformatie volgende zaken bijhouden:
-        # De breedte van de display
-        # De hoogte van de display
+    def __init__(self, breedte, hoogte, lijst):
+        self.breedte = breedte
+        self.hoogte = hoogte
 
-        # Creëer via pygame een display met de juiste breedte en hoogte
-        # Geef de display de caption "sorteeralgoritmes"
+        self.display = pygame.display.set_mode((breedte, hoogte))
+        pygame.display.set_caption("Sorteeralgoritmes")
+        self.set_lijst(lijst)
+
+    def set_lijst(self, lijst):
+        self.lijst = lijst
+        self.min_waarde = min(lijst)
+        self.max_waarde = max(lijst)
         
-        # Object zal ook de lijst + een aantal extra parameters over de lijst bijhouden. 
-        # Deze zetten we niet in __init__(). Want het moet mogelijk zijn om de lijst te resetten
-        # Daarom plaatsen we deze in een aparte methode
-        # Roep de methode set_lijst() op
-
-        pass
-
-    def set_lijst(self, lijst): 
-        # In deze methode moet het object volgende zaken bijhouden:
-        # De lijst die hij zal visualiseren. Deze lijst bestaat uit een aantal unieke waardes, gegenereerd via de functie genereer_begin_lijst()
-        # De minimum waarde in deze lijst
-        # De maximum waarde in deze lijst
-
-        # Hiernaast zal het object ook de breedte van een blok, de (eenheids)hoogte van een blok moeten onthouden en de startpositie van het linkse blok
-        # moeten onthouden 
-        # blok_breedte: Breedte van een blok (hou rekening met padding). Omgezet naar een integer
-        self.blok_breedte = ...
-        # blok_hoogte: Hoogte van het blok met de laagste waarde. Omgezet naar een integer (geg)
+        # Breedte van een blok (alle blokken hebben gelijke breedte). Afgerond naar een integer.
+        self.blok_breedte = int((self.breedte - self.PADDING_BREEDTE) / len(lijst))
+        # Hoogte van het blok met de laagste waarde. Afgerond naar een integer.
         self.blok_hoogte = int((self.hoogte - self.PADDING_HOOGTE) / (self.max_waarde-self.min_waarde)) 
-        # De beginpositie waarop het eerste blok getekend mag worden. Omgezet naar een integer
-        self.begin_x = ...
-        
+        # Beginpositie om te tekenen. Afgerond naar een integer.
+        self.begin_x = int(self.PADDING_BREEDTE/2)
 
-# Functie om lijst te genereren
-def genereer_begin_lijst(): # Vul input aan OBV onderstaande vereisten
-    # return een lijst OBV het aantal blokken, de min_waarde van het kleinste blok en de max_waarde van het hoogste blok
-    # De lijst mag geen blokken hebben waarvan de waardes gelijk zijn. 
-    # Tip: Je zoekt een functie uit de random module
-    lijst = ...
-
+def genereer_begin_lijst(min_waarde, max_waarde, n):
+    lijst = random.sample(range(min_waarde, max_waarde), n)
     return lijst
 
-# Functie om statische onderdelen van de display eenmalig te tekenen
-def teken_scherm_statisch(): # Vul input aan OBV onderstaande vereisten
-    # Maak om te beginnen de display compleet wit
-
-    # Er zijn twee statische onderdelen:
-    # instructies (Kleur=zwart, hoogte=5, breedte=centered, font=normaal): Bevat uitleg over hoe de simulatie te resetten/starten
-    # algoritmes (Kleur=zwart, hoogte=35, breedte=centered, font=normaal) : Bevat uitleg over hoe te wisselen tussen verschillende algoritmes
-    # Tip: Gebruik render() en blit() om de tekst op de display te zetten
-    # Tip: het is mogelijk om de breedte van de geschreven tekst op te vragen
+# Functie om statische onderdelen van het scherm eenmalig te tekenen.
+def teken_scherm_statisch(display_info, kleur, font):
+    hoogte_instructies = 5
+    hoogte_algoritmes = 35
+    display_info.display.fill(kleur.WIT)
     
-    instructies = font.FONT_NORMAAL.render(...)
-    display_info.display.blit(...)
+    instructies = font.FONT_NORMAAL.render("R - Reset | SPATIE - Start sorteren | T - toggle volgorde", 1, kleur.ZWART)
+    display_info.display.blit(instructies, (display_info.breedte/2 - instructies.get_width()/2 ,  hoogte_instructies))
 
-    algoritmes = font.FONT_NORMAAL.render(...)
-    display_info.display.blit(...)
 
-# Functie om het huidig geactiveerde algoritme te tekenen
-def teken_actief_algoritme(): # Vul input aan OBV onderstaande vereisten
-    # Maak om te beginnen het deel waarop het algoritme zich bevindt wit
-    # Teken hiervoor een rechthoek op de display met de juiste dimensies
-    # Zie verder voor vereisten van het tekenen
+    algoritmes = font.FONT_NORMAAL.render("I - Insertion | B - Bubble | M - Merge | Z - Bozo ", 1, kleur.ZWART)
+    display_info.display.blit(algoritmes, (display_info.breedte/2 - algoritmes.get_width()/2 ,  hoogte_algoritmes))
 
-    te_wissen_rechthoek = ...
-    pygame.draw.rect(..., ..., te_wissen_rechthoek)
+# Functie om het huidig geactiveerde algoritme te tekenen.
+def teken_actief_algoritme(display_info, kleur, font, actief_algoritme):
+    hoogte = 70
+    # Wis huidig algoritme om nieuw algoritme te tekenen.
+    te_wissen_rechthoek = (0, hoogte, display_info.breedte, font.FONT_GROOT.get_height())
+    pygame.draw.rect(display_info.display, kleur.WIT, te_wissen_rechthoek)
 
-    # Er is een onderdeel:
-    # sorteermethode (Kleur=groen, hoogte=70, breedte=centered, font=groot): Zegt welk algoritme actief is
-    sorteermethode = font.FONT_GROOT.render(f"Actief: ")
-    display_info.display.blit(...)
+    sorteermethode = font.FONT_GROOT.render(f"Actief: {actief_algoritme}", 1, kleur.GROEN)
+    display_info.display.blit(sorteermethode, (display_info.breedte/2-sorteermethode.get_width()/2, hoogte))
 
-# Functie om de huidige staat van de lijst te tekenen
-# De "actieve blokken" krijgen de kleuren rood en groen
-def teken_lijst():  # Vul input aan OBV onderstaande vereisten
+def teken_lijst(display_info, kleur, actieve_blokken):
+    lijst = display_info.lijst
 
-    # Wis deel waarop de blokken zich bevonden terug wit
-    te_wissen_rechthoek = ...
-    pygame.draw.rect(..., ..., te_wissen_rechthoek)
+    # Wis achtergrond om enkel staven opnieuw te tekenen.
+    te_wissen_rechthoek = (0, display_info.PADDING_HOOGTE, display_info.breedte, display_info.hoogte - display_info.PADDING_HOOGTE)
+    pygame.draw.rect(display_info.display, kleur.WIT, te_wissen_rechthoek)
 
-    # Overloop alle waarden in de lijst. (Tip: Je zal zowel de waarde van een blok als zijn index in de lijst nodig hebben)
-    # x: Op welke x-positie bevindt dit blok zich.
-    # y: op welke y-positie bevindt dit blok zich. (Gegeven)
-    # kleur: kleur van het blok. Gebruik Gradient en de index van het blok om ervoor te zorgen dat de drie kleuren grijs zich afwisselen.
-    #        maar... als de index van het blok overeenkomt met een actief blok, moet deze de overeenkomende kleur krijgen
-    #        (Tip: Geef een dictionary als input, zo kan je meteen index en kleur linken)
-       
-    for i, waarde in ...:
-        x = ...  
+    for i, waarde in enumerate(lijst):
+        x = display_info.begin_x+ i * display_info.blok_breedte
         y = display_info.hoogte - (waarde - display_info.min_waarde) * display_info.blok_hoogte
-        blok_kleur = ...
+
+        blok_kleur = kleur.GRADIENT[i%3] # Remainder is 0, 1 en 2. Hij zal hierdoor altijd opeenvolgend de drie kleuren grijs laten zien (maakt blokken meer leesbaar)
 
         if i in actieve_blokken:
-            ...
+            blok_kleur = actieve_blokken[i]
 
-        pygame.draw.rect(...)
+        pygame.draw.rect(display_info.display, blok_kleur, (x, y, display_info.blok_breedte, display_info.hoogte)) # Teken een blok van de lijst
 
-# Main-functie
+        
 def main():
-    # Enkele start-parameters
     run = True
     sorteren = False
-    klok = pygame.time.Clock() 
+    klok = pygame.time.Clock() # Momenteel niet relevant aangezien hij bubbel_sort helemaal uitvoert. Kijk in plaats hiervan naar sleep
+    volgorde = "opwaards"
 
-    # Hoeveel blokken we willen sorteren en tussen welke waardes ze zich bevinden (Let op: hoe groter de lijst, hoe langer het duurt)
-    n = ...
-    min_waarde = ...
-    max_waarde = ...
+    # Hoeveel blokken we willen sorteren en tussen welke (relatieve) hoogtes ze zich bevinden.
+    n = 5
+    min_waarde = 0
+    max_waarde = 101
 
-    lijst = genereer_begin_lijst(...)
+    lijst = genereer_begin_lijst(min_waarde,max_waarde,n)
    
-    # Creëer objecten van de klasses Kleur, Fonts en Displayinformatie
-    kleur = ...
-    font = ...
-    display_info = ... # Het scherm heeft een breedte van 800px en een hoogte van 600px
-
-    # Hou bij welk algoritme momenteel actief is. Zet generator klaar (Geg)
+    kleur = Kleur()
+    font = Fonts()
+    display_info = Displayinformatie(800, 600, lijst) 
     actief_algoritme = a.bubbel_sort
+    actief_algoritme_string = "Bubbel sort"
     actief_algoritme_generator = None
 
-    # Teken eerste versie van de display.
-    teken_scherm_statisch(...)
-    teken_actief_algoritme(..., "Bubbel sort")
-    teken_lijst(...) # In eerste instantie zijn er nog geen "actieve blokken", geef daarom een leeg dictionary mee
+    teken_scherm_statisch(display_info, kleur, font)
+    teken_actief_algoritme(display_info, kleur, font, f"{actief_algoritme_string} - {volgorde}")
+    teken_lijst(display_info, kleur, {})   
 
     while run:
-        # Laat programma lopen op 60 FPS
-        # Update de display (gebruik hiervoor een functie van pygame)
+        klok.tick(5)
+        pygame.display.update()
 
-        # We zullen een generator gebruiken om door het algoritme te lopen
-        # Een generator zal onthouden wat zijn huidige staat is, wanneer deze wordt onderbroken
-        # Op deze manier blijven wij toegang krijgen tot de knoppen, zelfs terwijl het algoritme sorteert!
-        # Als je nog niet bekend bent met generators. Zoek wat tutorials op en maak wat simpele oefeningen (bvb in test.py)
         if sorteren:
             try:
-               i, j = next(actief_algoritme_generator)
-               teken_lijst(...) # Vul de dictionary in met i = groen, j = rood 
-            except StopIteration: # Als de lijst helemaal doorlopen geeft de generator deze error
+               i, j, begin = next(actief_algoritme_generator)
+               i += begin
+               teken_lijst(display_info, kleur, {i: kleur.GROEN, j: kleur.ROOD})
+            except StopIteration:
                 sorteren = False
-                teken_lijst(...) # Teken de lijst een laatste maal. Dit zodat alle blokken een grijze-gradient hebben.
+                teken_lijst(display_info, kleur, {}) # Zorgt ervoor dat alle kleuren weg zijn wanneer sorteren klaar is
 
-        # Creëer de keyhandles voor de simulatie:
-        # QUIT: Simulatie moet stoppen met "runnen"
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r: # Reset de lijst
+                    sorteren = False
+                    lijst = genereer_begin_lijst(min_waarde,max_waarde,n)
+                    display_info.set_lijst(lijst)
+                    teken_lijst(display_info, kleur, {})
+                elif event.key == pygame.K_SPACE:
+                    sorteren = True # Sorteren mag beginnen
+                    actief_algoritme_generator = actief_algoritme(display_info.lijst, volgorde)
+                elif event.key == pygame.K_b and sorteren == False:
+                    actief_algoritme = a.bubbel_sort
+                    actief_algoritme_string = "Bubbel sort"
+                    teken_actief_algoritme(display_info, kleur, font, f"{actief_algoritme_string} - {volgorde}")
+                elif event.key == pygame.K_i and sorteren == False:
+                    actief_algoritme = a.insertion_sort
+                    actief_algoritme_string = "Insertion sort"
+                    teken_actief_algoritme(display_info, kleur, font, f"{actief_algoritme_string} - {volgorde}")
+                elif event.key == pygame.K_m and sorteren == False:
+                    actief_algoritme = a.merge_sort
+                    actief_algoritme_string = "Merge sort"
+                    teken_actief_algoritme(display_info, kleur, font, f"{actief_algoritme_string} - {volgorde}")
+                elif event.key == pygame.K_z and sorteren == False:
+                    actief_algoritme = a.bozo_sort
+                    actief_algoritme_string = "Bozo sort"
+                    teken_actief_algoritme(display_info, kleur, font, f"{actief_algoritme_string} - {volgorde}")
+                elif event.key == pygame.K_t and sorteren == False:
+                    if volgorde == "opwaards":
+                        volgorde = "neerwaards"
+                    else:
+                        volgorde = "opwaards"
+                    teken_actief_algoritme(display_info, kleur, font, f"{actief_algoritme_string} - {volgorde}")
 
-        # r: De simulatie moet resetten. Dit betekent dat het sorteren stopt en er een nieuw lijst gegenereerd wordt
-        #    (Vergeet niet om deze nieuwe lijst in display_info te "setten" en te tekenen op de display)
-        # spatie: Start met sorteren
-        # b: Zet het actief_algoritme naar bubbel_sort en verander actief algoritme op display naar "Bubbel sort"
-        #    Deze toets mag enkel iets doen zolang het programma niet aan het sorteren is.
-        # i: Zet het actief_algoritme naar insertion_sort en verander actief algoritme op display naar "Insertion sort"
-        #    Deze toets mag enkel iets doen zolang het programma niet aan het sorteren is.
-        # z: Zet het actief_algoritme naar bozo_sort en verander actief algoritme op display naar "Bozo sort"
-        #    Deze toets mag enkel iets doen zolang het programma niet aan het sorteren is.
-
-    # Stop pygame als de "QUIT" toets is ingeduwd.
     pygame.quit()
 
 
