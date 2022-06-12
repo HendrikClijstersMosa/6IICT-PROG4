@@ -14,7 +14,7 @@ class Storm:
         while running:
             interval = self.clock.tick(10)
             running = self.handle_events()
-            self.update_particles(interval)
+            self.update_particles(interval) # Handles updating and resetting of particles
             self.update_screen()
         pygame.quit()
 
@@ -42,7 +42,7 @@ class Storm:
     def update_particles(self, interval):
         for particle in self.particles:
             particle.update(interval)
-            particle.reset(interval)
+            particle.reset()
 
     # Fill the screen with all different particles
     def update_screen(self):
@@ -61,13 +61,13 @@ if __name__ == '__main__':
     # storm = Storm({Boring:20}, 0.001, 600, 600)
 
     """ Use for testing version 4 - change number of particles as you please """
-    # storm = Storm({Boring:0, Bouncers:20}, 0.001, 600, 600)
+    # storm = Storm({Boring:0, Bouncing:20}, 0.001, 600, 600)
 
     """ Use for testing version 5 - change number of particles as you please """
-    # storm = Storm({Boring:0, Bouncers:0, Spinning: 20}, 0.001, 600, 600)
+    # storm = Storm({Boring:0, Bouncing:0, Spinning: 20}, 0.001, 600, 600)
     
-    """ Use for testing version 6 - """
-    # storm = Storm({Boring:20, Bouncers:20, Spinning:20, Gravitational:20}, 0.001, 600, 600)
+    """ Use for testing version 6 - change number of particles as you please """
+    # storm = Storm({Boring:20, Bouncing:20, Spinning:20, Gravitational:20}, 0.001, 600, 600)
     
     storm.loop()
 
