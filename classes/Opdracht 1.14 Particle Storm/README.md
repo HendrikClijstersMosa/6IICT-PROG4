@@ -28,13 +28,13 @@ You have been given two files to start with.
 
 
 ## Version 2
-The base implementation has a serious flaw. Look at the below gif. It shows the base implementation running at 10 FPS (not 120 FPS). You should notice the particles moving quite a bit slower. In fact they move 12x slower!
+The base implementation has a serious flaw. Set the FPS to 10 by changing self.clock.tick(120) to self.clock.tick(10) in `storm.py`. You should notice the particles moving quite a bit slower. In fact they move 12x slower! This is also shown in the below gif.
 
 <p align="center">
   <img src="media/firestorm_base_10 FPS.gif" width="400" height="400"/>
 </p>
 
-The reason for this can be found in the `loop()` method of Storm. The particles will only move when `update_particles()` is called. With 120 FPS this will happen 120 times per second. However, when FPS is only 10, it will happen only 10 times per second. This is of course bad design. Imagine a game that constantly speeds up or slows down depending on the current FPS.
+The reason for this can be found in the `loop()` method of Storm. The particles will only update their position when `update_particles()` is called. With 120 FPS this will happen 120 times per second. However, when FPS is only 10, it will happen only 10 times per second. This makes it seem like the particles have a different speed depending on the FPS. This is of course bad design. Imagine a game that constantly speeds up or slows down depending on the current FPS.
 
 It is possible to make the movement of particles FPS independent. For this the `interval` parameter should be used. The argument given to this parameter is equal to the time between two frames (in ms). So with 100 FPS, time between two frames is 10 ms. However, with 5 FPS, time between two frames is 200 ms. Your task for this version is changing the `update()` method of Particle (using `interval`) in such a way that the particles move the same distance during a certain time, regardless of FPS.
 
