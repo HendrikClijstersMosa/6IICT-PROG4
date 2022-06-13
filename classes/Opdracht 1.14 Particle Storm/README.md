@@ -16,8 +16,10 @@ You have been given two files to start with.
   <img src="media/firestorm_base_120 FPS.gif" width="400" height="400"/>
 </p>
 
-* `update()`: Every time this method is called the x and y position of a particle should be increased by the value of their speed in the x and y direction.
-* `reset()`: `storm.py` maps the coordinates of a particle to a pixel location on the screen. For example, when a particle has coordinates x=-1, y=1, it's location on the screen will be x=0, y=SCREEN_HEIGHT (see below picture). As a result, particles that whose `pos_x`/`pos_y` are smaller than -1 or larger than 1 will no longer be visible on the screen (you can check this yourself by running `storm.py` after completing the `update()` method). The reset method checks if a particle is "out of bounds" (I.E. has a position smaller/larger than -1/1). If this is the case it will reset this particle by calling it's `__init__()`. This will make it seem like the particle that went "out of bounds" despawned and a new particle appeared in the center (look closely at the above gif, what happens when particles reach the edge?).
+* `update()`: every time this method is called the x and y position of a particle should be increased by the value of their speed in the x and y direction.
+* `reset()`: calls `__init__()` of the object when it's `pos_x` or `pos_y` are smaller/larger than -1/1. Read the below text for more info.
+
+`storm.py` maps the coordinates of a particle to a pixel location on the screen. For example, when a particle has coordinates x=-1, y=1, it's pixel location on the screen will be x=0, y=SCREEN_HEIGHT (see below picture). As a result, particles whose `pos_x` or `pos_y` are smaller than -1 or larger than 1 will no longer be visible on the screen. You can check this yourself by running `storm.py` after completing the `update()` method. The `reset()` method will make it seem like a particle that went "out of bounds" despawned and caused a new particle to appear in the center (look closely at the above gif, what happens when particles reach the edge?).
 
 <p align="center">
   <img src="media/reset_mapping.png" width="600" height="300"/>
