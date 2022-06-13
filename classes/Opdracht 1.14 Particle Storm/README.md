@@ -1,6 +1,6 @@
 
 # Assignment
-You will be making a Particle Storm. This is a simulation that will calculate the position of a number of particles, and then show them on the screen. Below is an example of what the end result could look like. You will start by creating the base implementation. After finishing the base you will improve on it a number of times. Each improvement will build on the previous ones. To incorporate these improvements, you will constantly edit and change the code you have previously written. For this reason it might be a good idea to sometimes make a copy of a stable build. The README will only tell you what to do, not exactly how to do it. Try experimenting with your code and looking for a solution you think best. 
+You will be making a Particle Storm. This is a simulation that will calculate the position of a number of particles, and then show them on the screen. Below is an example of what the end result could look like. You will start by creating the base implementation. After finishing the base, you will improve on it a number of times. Each new version will build on the previous ones. To incorporate these improvements, you will constantly edit and change the code you have previously written. For this reason it might be a good idea to sometimes make a copy of a stable build. The README will only tell you what to do, not exactly how to do it. Try experimenting with your code and look for a solution you think is best. 
 
 <p align="center">
   <img src="media/firestorm_version6.gif" width="400" height="400"/>
@@ -9,14 +9,14 @@ You will be making a Particle Storm. This is a simulation that will calculate th
 
 ## Base implementation
 You have been given two files to start with. 
-* `storm.py`: contains the pygame applications, it has already been completed. At the bottom you will find different objects of the class Storm. These correspond to the different versions you will have to make as described below. Always make sure all objects of Storm are commented, except for the version you are currently making.
-* `particle.py`: contains the "physics" of the particle. The properties have already been given. It is your job to implement the methods `update()` and `reset()` (`set_color()` will come into play at a later point). For now you can ignore the parameter `interval`. It will come into play in version 2 of the program. At the end of the base implementation, running `storm.py` will give the following result (assuming 120 FPS). Your result may vary depending on the given max_speed.
+* `storm.py`: contains the pygame applications, it has already been completed. At the bottom you will find different objects of the class Storm. These correspond to the different versions you will have to make as described above. Always make sure all objects of Storm are commented, except for the version you are currently making.
+* `particle.py`: contains the "physics" of the particle. The properties have already been given. It is your job to implement the methods `update()` and `reset()`. `set_color()` will come into play at a later point. you can also ignore the parameter `interval` in the method `update()`. It will be used in version 2 of the program. At the end of the base implementation, running `storm.py` will give the following result (assuming 120 FPS). Your result may vary depending on the given max_speed.
 
 <p align="center">
   <img src="media/firestorm_base_120 FPS.gif" width="400" height="400"/>
 </p>
 
-* `storm.py`: Every time this method is called the x and y position of a particle should be increased by the value of their speed in the x and y direction.
+* `update()`: Every time this method is called the x and y position of a particle should be increased by the value of their speed in the x and y direction.
 * `reset()`: `storm.py` maps the coordinates of a particle to a pixel location on the screen. For example, when a particle has coordinates x=-1, y=1, it's location on the screen will be x=0, y=SCREEN_HEIGHT (see below picture). As a result, particles that whose `pos_x`/`pos_y` are smaller than -1 or larger than 1 will no longer be visible on the screen (you can check this yourself by running `storm.py` after completing the `update()` method). The reset method checks if a particle is "out of bounds" (I.E. has a position smaller/larger than -1/1). If this is the case it will reset this particle by calling it's `__init__()`. This will make it seem like the particle that went "out of bounds" despawned and a new particle appeared in the center (look closely at the above gif, what happens when particles reach the edge?).
 
 <p align="center">

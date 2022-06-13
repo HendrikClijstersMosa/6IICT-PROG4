@@ -12,7 +12,7 @@ class Storm:
     def loop(self):
         running = True
         while running:
-            interval = self.clock.tick(10)
+            interval = self.clock.tick(120)
             running = self.handle_events()
             self.update_particles(interval) # Handles updating and resetting of particles
             self.update_screen()
