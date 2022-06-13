@@ -34,31 +34,31 @@ The base implementation has a serious flaw. Set the FPS to 10 by changing self.c
   <img src="media/firestorm_base_10 FPS.gif" width="400" height="400"/>
 </p>
 
-The reason for this can be found in the `loop()` method of Storm. The particles will only update their position when `update_particles()` is called. With 120 FPS this will happen 120 times per second. However, when FPS is only 10, it will happen only 10 times per second. This makes it seem like the particles have a different speed depending on the FPS. This is of course bad design. Imagine a game that constantly speeds up or slows down depending on the current FPS.
+The reason for this can be found in the `loop()` method of Storm. The particles will only update their position when `update_particles()` is called. With 120 FPS this will happen 120 times per second. However, when FPS is only 10, it does this only 10 times per second. This makes it seem like the particles have a different speed depending on the FPS. This is of course bad design. Imagine a game that constantly speeds up or slows down depending on the current FPS.
 
 It is possible to make the movement of particles FPS independent. For this the `interval` parameter should be used. The argument given to this parameter is equal to the time between two frames (in ms). So with 100 FPS, time between two frames is 10 ms. However, with 5 FPS, time between two frames is 200 ms. Your task for this version is changing the `update()` method of Particle (using `interval`) in such a way that the particles move the same distance during a certain time, regardless of FPS.
 
-TIP: Say you have two simulations, one with 100 FPS, the other with 5 FPS. Calculate how far a random particle will move during a second. What difference is there between the distances moved? Is there a way to make these distances equal by including `interval`?
+TIP: Say you have two simulations, one with 100 FPS, the other with 5 FPS. Calculate how far a random particle will move in each simulation during a second (speed being equal). What difference is there between the distances moved? Is there a way to make these distances equal by including `interval`?
 * `interval` for 100 FPS : 10 ms.
-* `interval` for 5 FPS:    200 ms.
+* `interval` for 5 FPS   : 200 ms.
 
-When implemented correctly, this is how the simulation can look (left is 10 FPS, right is 120 FPS). Do note that the simulation seems choppier when ran at 10 FPS.
+When implemented correctly, this is how the simulation can look (left is 10 FPS, right is 120 FPS). The particles seem to move the same distance. Do note that the simulation seems choppier when ran at 10 FPS.
 <p align="center">
   <img src="media/firestorm_version2_10 FPS.gif" width="400" height="400"/>
   <img src="media/firestorm_version2_120 FPS.gif" width="400" height="400"/>
 </p>
 
 ## Version 3
-The current implementation of the class Particle is limiting. What if we want a different movement pattern for certain particles (bouncing on walls, spinning, ...)? It would be better to use the class Particle as an interface class (template that other classes would have to follow).
+The current implementation of the class Particle is limiting. What if we want a different movement pattern for certain particles (bouncing on edges, spinning, ...)? It would be better to use the class Particle as an interface class (template whose properties and methods are used by other classes).
 
-Create a new class Boring, it should inherit from Particle. In Boring create the methods `__init__()`, `update()` and `reset()`.
+Create a new class called Boring, it should inherit from Particle. In Boring create the methods `__init__()`, `update()` and `reset()`.
 * `__init__()`: simply call the `__init__()` of Particle. Objects of Boring should have all the properties that objects of Particle have.
 * `update()`: take the code in the `update()` of Particle, and place it in the `update()` of Boring. Make it so `update()` of Particle is empty (use pass).
 * `reset()`: take the code in the `reset()` of Particle, and place it in the `reset()` of Boring. Make it so `reset()` of Particle is empty (use pass).
 
 If you are not completely certain of what the end result should look like, you can always try something and then ask!
 
-When implemented correctly, running version 3 of storm will seem exactly the same as version 2. It is now way easier to add new kinds of Particles to the program. It is handy for Particle to contain `update()`, `reset()` and `set_color()`, even if they are empty. This makes it clear to a programmer which methods he needs to implement when creating a new kind of particle. The below picure shows the difference between the class diagrams of version 2 and 3. 
+When implemented correctly, running version 3 of storm will seem exactly the same as version 2. However, it is now way easier to add new kinds of Particles to the program. It is handy for class Particle to still contain `update()`, `reset()` and `set_color()`, even if they are empty. This makes it clear to a programmer which methods he needs to implement when creating a new kind of particle. The below picure shows the difference between the class diagrams of version 2 and 3. 
 
 <table class = "center">
   <tr>
@@ -76,11 +76,13 @@ When implemented correctly, running version 3 of storm will seem exactly the sam
 </table>
 
 ## Version 4
-With the framework in place it is now time to create a new kind of Particle, namely a Bouncing one (class Bouncing). The particle calls the `__init__()` of it's parent Particle, no new properties need to be added. Bouncing will behave similar to Boring, it's color will start of as white, and it will move towards the edge in a straight line. When reaching this edge it will not "respawn" like Boring. Instead it will bounce of off the edge. This bouncing will cause it's speed_x or speed_y to change, this depending on if it hit a horizontal or vertical edge (see gif). In addition, when bouncing against an edge it's color should change. You can choose for yourself how this will work exactly (in below gif, it becomes yellow when bouncing on vertical edges, and blue on horizontal edges). 
+With the framework in place it is now time to create a new kind of Particle, namely a Bouncing one (class Bouncing). The particle calls the `__init__()` of it's parent Particle, no new properties need to be added. Bouncing will behave similar to Boring, it's color will start of as white, and it will move towards the edge in a straight line. When reaching this edge it will not "respawn" like Boring. Instead it will bounce of off the edge. This bouncing will cause it's `speed_x` or `speed_y` to change, this depending on if it hit a horizontal or vertical edge (see gif). In addition, when bouncing against an edge it's color should change. You can choose for yourself how this will work exactly (in below gif, it becomes yellow when bouncing on vertical edges, and blue on horizontal edges). 
 
-Because the particles bounce of the edge it is impossible for them to "go out of bounds", meaning that Bouncing particles will remain indefinitely. We want to change this. Every time the `reset()` method is called, a particle should have the possibility of "despawning" (having it's `__init__()` called). Create a threshold attribute and set it to a certain value between 0 and 1. Use the function `random()` and check if the generated number is higher than the threshold. If this is the case the Bouncing particle should despawn. You can also add this reset condition to Boring. This way slow moving Boring particles will still have a way of resetting.
+Because the particles bounce of the edge it is impossible for them to "go out of bounds", meaning that Bouncing particles will remain indefinitely. We want to change this. Every time the `reset()` method is called, a particle should have the possibility of "despawning" (having it's `__init__()` called). Create a threshold attribute and set it to a certain value between 0 and 1. Use the function `random()` and check if the generated number is higher than the threshold. If this is the case the Bouncing particle should despawn. You can also add this reset condition to Boring. This way slow moving Boring particles will also have a way of resetting.
 
 TIP: think specifically how the methods `update()`, `reset()` and `change_color()` differ from Boring. Examine `reset()` in particular how will it change in comparison with the `reset()` of Boring?
+
+TIP: how will speed_x and speed_y change after hitting an horizontal or vertical edge? In case your uncertain. Try drawing a figure with x- and y-axis. Imagine a particle bouncing of these axes. What was it's direction in the x- and y-direction before bouncing? What was it after?
 
 TIP: the color of the particle is set using a mix of Red-Green-Blue. The maximum value that each of these base colors can have is 255. The minimum is 0.
 
@@ -99,7 +101,7 @@ TIP: the color of the particle is set using a mix of Red-Green-Blue. The maximum
   </tr>
 </table>
 
-EXTRA: Your current implementation of `reset()` might not be FPS independent. Think about the following situation. With 120 FPS, the `reset()` for each particle will be called 120 times per second. If FPS is only 10, `reset()` will be called only 10 times per second. Is the particle running on 120 FPS more likely to despawn during 1 second than the same particle at 10 FPS? How would you go about fixing this?
+EXTRA: Your current implementation of Bouncing `reset()` might not be FPS independent. Think about the following situation. With 120 FPS, the `reset()` for each particle will be called 120 times per second. If FPS is only 10, `reset()` will be called only 10 times per second. Is the particle running on 120 FPS more likely to despawn during 1 second than the same particle at 10 FPS? How would you go about fixing this?
 
 ## Version 5
 Add a new kind of particle Spinning (class Spinning). This particle will spin clockwise whilst moving. The degree to which it spins should be random. It has the same conditions for respawning as Boring. It should change color depending on which direction it is moving (Example: red when moving horizontal, blue when moving vertical).
